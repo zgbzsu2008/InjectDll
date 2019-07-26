@@ -1,0 +1,343 @@
+---
+Language:        Cpp
+# BasedOnStyle:  Google
+
+AccessModifierOffset: -4
+#额外的缩进或访问修饰符，例如public:
+
+AlignAfterOpenBracket: Align
+#如果true，在开括号之后水平对齐参数。这适用于圆括号（括号），尖括号和方括号
+#BAS_Align（在配置中Align:)对齐打开括号上的参数
+#BAS_DontAlign（在配置中DontAlign:)不要对齐，而是使用ContinuationIndentWidth
+#BAS_AlwaysBreak（在配置中AlwaysBreak:)如果参数不适合单行，则在打开括号后总是断开
+
+AlignConsecutiveAssignments: false
+#如果true，对齐连续分配
+
+AlignConsecutiveDeclarations: false
+#如果true，对齐连续的声明
+
+AlignEscapedNewlines: Left
+#用于在转义换行符中对齐反斜杠的选项
+#ENAS_DontAlign（在配置中DontAlign:)不要对齐转义的换行符。
+#ENAS_Left（在配置中Left:)尽可能向左对齐转义的换行符
+#ENAS_Right（在配置中Right:)对齐最右列中的转义换行符。
+
+AlignOperands:   true
+#如果true，水平对齐二进制和三元表达式的操作数
+
+AlignTrailingComments: true
+#如果true，对齐尾随的评论
+
+AllowAllParametersOfDeclarationOnNextLine: false
+#如果函数声明不适合某一行，则允许将函数声明的所有参数放到下一行，即使BinPackParameters是false
+
+AllowShortBlocksOnASingleLine: false
+#允许将简单的括号语句缩减为单行
+
+AllowShortCaseLabelsOnASingleLine: false
+#如果true，短案例标签将签约到一行
+
+AllowShortFunctionsOnASingleLine: Inline
+#取决于价值，可以放在一条线上
+#SFS_None（在配置中None:)从不将功能合并为一行
+#SFS_InlineOnly（在配置中InlineOnly:)仅合并在类中定义的函数。与“inline”相同，除了它不暗示“空”：即顶级空函数也未合并
+#SFS_Empty（在配置中Empty:)仅合并空函数
+#SFS_Inline（在配置中Inline:)仅合并在类中定义的函数。意味着“空洞”
+#SFS_All（在配置中All:)合并所有适合单行的函数
+
+AllowShortIfStatementsOnASingleLine: false
+#如果true，可以放在一条线上
+#SIS_Never（在配置中Never:)不要将短ifs放在同一条线上。
+#SIS_WithoutElse（在配置中WithoutElse:)只有在else不是复合语句的情况下，才能将short if放在同一行上。
+#SIS_Always（在配置中Always:)如果else不是复合语句，总是将短ifs放在同一行上。
+
+AllowShortLoopsOnASingleLine: false
+#如果true，可以放在一条线上
+
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+#函数定义返回类型破坏样式使用
+#DRTBS_None（在配置中None:)自动中断后返回类型。 PenaltyReturnTypeOnItsOwnLine被考虑在内。
+#DRTBS_All（在配置中All:)总是在返回类型后中断。
+#DRTBS_TopLevel（在配置中TopLevel:)总是在返回顶级函数类型后中断。
+
+AlwaysBreakBeforeMultilineStrings: false
+#如果true，总是在多行字符串文字之前中断
+
+AlwaysBreakTemplateDeclarations: Yes
+#模板声明打破要使用的样式
+#BTDS_No（在配置中No:)不要在声明之前强制中断。 PenaltyBreakTemplateDeclaration被考虑在内
+#BTDS_MultiLine（在配置中MultiLine:)仅当以下声明跨越多行时，才在模板声明后强制中断。
+#BTDS_Yes（在配置中Yes:)总是在模板声明后中断。
+
+BinPackArguments: false
+#如果false，函数调用的参数将全部在同一行上，或者每行都有一行。
+
+BinPackParameters: false
+#如果false，函数声明或函数定义的参数将全部在同一行上，或者每行都有一行。
+
+#如果BreakBeforeBraces设置为BS_Custom，则使用此选项指定应如何处理每个支撑盒。否则，这将被忽略。
+BraceWrapping:   
+  AfterClass:      true
+  AfterControlStatement: false
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: true
+  
+BreakBeforeBinaryOperators: None
+#包装二元运算符的方法
+#BOS_None（在配置中None:)打破运算符
+#BOS_NonAssignment（在配置中NonAssignment:)在不分配的运算符之前中断。
+#BOS_All（在配置中All:)在运算符之前休息
+
+BreakBeforeBraces: Mozilla
+#支撑破碎风格使用。
+#BS_Attach（在配置中Attach:)始终将大括号附加到周围的上下文。
+#BS_Linux（在配置中Linux:)喜欢Attach，但在函数，命名空间和类定义的大括号之前中断。
+#BS_Mozilla（在配置中Mozilla:)喜欢Attach，但在枚举，函数和记录定义之前断开
+#BS_Stroustrup（在配置中Stroustrup:)喜欢Attach，但在函数定义之前中断catch，和 else。
+#BS_Allman（在配置中Allman:)总是在括号前断开
+#BS_GNU（在配置中GNU:)总是在大括号之前中断并为控制语句的大括号添加额外级别的缩进，而不是对类，函数或其他定义的大括号
+#BS_WebKit（在配置中WebKit:)喜欢Attach，但在功能之前中断。
+#BS_Custom（在配置Custom中:)在BraceWrapping中配置每个支撑。
+
+BreakBeforeTernaryOperators: true
+#如果true，三元运算符将在换行后放置。
+
+BreakBeforeInheritanceComma: false
+BreakConstructorInitializersBeforeComma: false
+BreakInheritanceList: BeforeComma
+BreakConstructorInitializers: BeforeComma
+#要使用的构造函数初始值设定项样式
+#BCIS_BeforeColon（在配置中BeforeColon:)在冒号之前和逗号之后断开构造函数初始值设定项。
+#BCIS_BeforeComma（在配置中BeforeComma:)在冒号和逗号之前断开构造函数初始值设定项，并将逗号与冒号对齐。
+#BCIS_AfterColon（在配置中AfterColon:)在冒号和逗号后面断开构造函数初始值设定项。
+
+BreakAfterJavaFieldAnnotations: false
+
+BreakStringLiterals: true
+#格式化时允许破坏字符串文字。
+
+ColumnLimit:     200
+#列限制0意味着没有列限制
+
+CommentPragmas:  '^ IWYU pragma:'
+#描述具有特殊含义的注释的正则表达式，不应拆分为行或以其他方式更改。
+
+CompactNamespaces: false
+#如果true，连续的名称空间声明将在同一行。如果false，每个命名空间都在新行上声明。
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+#如果构造函数初始值设定项不适合某一行，则将每个初始值设定项放在自己的行上
+
+ConstructorInitializerIndentWidth: 4
+#用于缩进构造函数初始值设定项列表以及继承列表的字符数。
+
+ContinuationIndentWidth: 4
+#行连续的缩进宽度
+
+Cpp11BracedListStyle: true
+#如果true，将支撑列表格式化为最适合C ++ 11支撑列表的列表
+
+DerivePointerAlignment: false
+#如果true，分析格式化文件以进行最常见的对齐&和*。指针和引用对齐样式将根据文件中的首选项进行更新。 PointerAlignment然后仅用作后备
+
+DisableFormat:   false
+#完全禁用格式化。
+
+ExperimentalAutoDetectBinPacking: false
+#如果true，clang-format检测函数调用和定义是否格式化为每行一个参数。
+
+FixNamespaceComments: true
+#如果true，clang-format添加了缺少的命名空间结束注释并修复了无效的现有注释。
+
+ForEachMacros:   
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+#一个宏的向量，应该被解释为foreach循环而不是函数调用
+ 
+IncludeBlocks:   Regroup
+#根据值，#include可以将多个块排序为一个，并根据类别进行划分
+#IBS_Preserve（在配置中Preserve:)分别对每个#include块进行排序。
+#IBS_Merge（在配置中Merge:)将多个#include块合并在一起并排序为一个。
+#IBS_Regroup（在配置中Regroup:)将多个#include块合并在一起并排序为一个。然后根据类别优先级拆分成组。见 IncludeCategories。
+
+IncludeCategories: 
+  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:        2
+  - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
+    Priority:        3
+  - Regex:           '.*'
+    Priority:        1
+#正则表达式表示#include用于排序的不同类别#includes。
+
+IncludeIsMainRegex: '(Test)?$'
+#指定file-to-main-include映射中允许的后缀的正则表达式
+
+IndentCaseLabels: true
+#缩进案例标记switch语句中的一个级别
+
+IndentPPDirectives: AfterHash
+#要使用的预处理器指令缩进样式。
+#PPDIS_None（在配置中None:)不缩进任何指令。
+#PPDIS_AfterHash（在配置中AfterHash:)在哈希后缩进指令。
+#PPDIS_BeforeHash（在配置中BeforeHash:)在哈希之前缩进指令。
+
+IndentWidth:     4
+#用于缩进的列数。
+
+IndentWrappedFunctionNames: false
+#如果在类型之后包装函数定义或声明，则缩进
+
+JavaScriptQuotes: Leave
+JavaScriptWrapImports: true
+
+KeepEmptyLinesAtTheStartOfBlocks: true
+MacroBlockBegin: ''
+#正则表达式匹配启动块的宏
+
+MacroBlockEnd:   ''
+#正则表达式匹配结束块的宏。
+
+MaxEmptyLinesToKeep: 1
+#要保留的最大连续空行数
+
+NamespaceIndentation: None
+#用于命名空间的缩进
+#NI_None（在配置中None:)不要在命名空间中缩进。
+#NI_Inner（在配置中Inner:)仅在内部命名空间中缩进（嵌套在其他命名空间中）。
+#NI_All（在配置中All:)在所有命名空间中缩进。
+
+ObjCBinPackProtocolList: Auto
+#控制bin-packing Objective-C协议一致性列表项在它们结束时尽可能少的行ColumnLimit
+
+ObjCBlockIndentWidth: 4
+#用于缩进ObjC块的字符数
+
+ObjCSpaceAfterProperty: true
+#@property在Objective-C 之后添加一个空格，即使用 而不是。@property (readonly)@property(readonly)
+
+ObjCSpaceBeforeProtocolList: false
+#在Objective-C协议列表前面添加一个空格，即使用 而不是。Foo <Protocol>Foo<Protocol>
+
+PenaltyBreakAssignment: 2
+#打破赋值运算符的惩罚
+
+PenaltyBreakBeforeFirstCallParameter: 19
+#打破函数调用后的惩罚call
+
+PenaltyBreakComment: 300
+#评论中引入了每个换行符的罚分
+
+PenaltyBreakFirstLessLess: 120
+#在第一个之前打破的罚分
+
+PenaltyBreakString: 1000
+#在字符串文字中引入的每个换行符的惩罚
+
+PenaltyBreakTemplateDeclaration: 10
+#模板声明后中断的惩罚
+
+PenaltyExcessCharacter: 1000000
+#列限制之外的每个字符的惩罚
+
+PenaltyReturnTypeOnItsOwnLine: 200
+#将函数的返回类型放在自己的行上的惩罚。
+
+PointerAlignment: Right
+#指针和参考对齐样式
+#PAS_Left（在配置中Left:)将指针对齐到左侧
+#PAS_Right（在配置中Right:)将指针对齐到右边
+#PAS_Middle（在配置中Middle:)将指针对齐在中间
+
+ReflowComments:  true
+#如果true，clang-format将尝试重新发送评论
+
+SortIncludes:    false
+#如果true，clang-format将排序#includes
+
+SortUsingDeclarations: true
+#如果true，clang-format将使用声明排序
+
+SpaceAfterCStyleCast: false
+#如果true在C样式转换后插入空格
+
+SpaceAfterTemplateKeyword: false
+#如果true，'template'关键字后面会插入一个空格
+
+SpaceBeforeAssignmentOperators: true
+#如果false，在赋值运算符之前将删除空格
+
+SpaceBeforeCpp11BracedList: false
+#如果true，在用于初始化对象的C ++ 11支撑列表之前插入一个空格（在前面的标识符或类型之后）。
+
+SpaceBeforeCtorInitializerColon: true
+#如果false，在构造函数初始化器冒号之前将删除空格
+
+SpaceBeforeInheritanceColon: true
+#如果false，继承冒号之前将删除空格
+
+SpaceBeforeParens: ControlStatements
+#定义在打开括号之前放置空格的情况
+#SBPO_Never（在配置中Never:)在打开括号之前切勿放置空格
+#SBPO_ControlStatements（在配置中ControlStatements:)仅在控制语句关键字（for/if/while...）之后在打开括号之前放置一个空格
+#SBPO_NonEmptyParentheses（在配置中NonEmptyParentheses:)只有当括号不为空时才打开括号
+#SBPO_Always（在配置中Always:)在打开括号之前总是放置一个空格，除非它被语法规则禁止（在类似函数的宏定义中）或由其他样式规则确定（在一元运算符之后，打开括号等）
+
+SpaceBeforeRangeBasedForLoopColon: true
+#如果false，在基于范围的for循环冒号之前将删除空格
+
+SpaceInEmptyParentheses: false
+#如果true，可以插入空格()
+
+SpacesBeforeTrailingComments: 1
+#尾随行注释（//- 注释）之前的空格数
+
+SpacesInAngles:  false
+#如果true，将 在模板参数列表<之前和之后插入空格>
+
+SpacesInContainerLiterals: false
+#如果true，在容器文字中插入空格（例如ObjC和Javascript数组和字典文字）
+
+SpacesInCStyleCastParentheses: false
+#如果true，空格将在(之前和之后插入)
+
+SpacesInParentheses: false
+#如果true，空格将在(之前和之后插入)。
+
+SpacesInSquareBrackets: false
+#如果true，空格将在[之前和之后插入]。Lambdas或未指定大小的数组声明不会受到影响。
+
+Standard:        Cpp11
+#格式与此标准兼容
+#LS_Cpp03（在配置中Cpp03:)使用与C ++ 03兼容的语法。
+#LS_Cpp11（在配置中Cpp11:)使用C ++ 11，C ++ 14和C ++ 1z的功能（例如A<A<int>>代替 ）。A<A<int> >
+#LS_Auto（在配置中Auto:)根据输入自动检测。
+
+StatementMacros: 
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+#应该被解释为完整语句的宏向量
+
+TabWidth:        4
+#用于制表位的列数
+
+UseTab:          Never
+#在结果文件中使用制表符的方法。
+#UT_Never（在配置中Never:)从不使用标签。
+#UT_ForIndentation（在配置中ForIndentation:)仅使用选项卡进行缩进。
+#UT_ForContinuationAndIndentation（在配置中ForContinuationAndIndentation:)仅使用选项卡进行行继续和缩进。
+#UT_Always（在配置中Always:)每当我们需要填充至少从一个制表位到下一个制表位的空白时，请使用制表符。
+

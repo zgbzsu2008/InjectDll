@@ -1,0 +1,179 @@
+/* 内存加载Dll流程
+1.检测DOS和PE头的合法性。
+2.尝试在PEHeader.OptionalHeader.ImageBase位置分配PEHeader.OptionalHeader.SizeOfImage字节的内存区域。
+3.解析Section header中的每个Section，并将它们的实际内容拷贝到第2步分配的地址空间中。拷贝的目的地址的计算方法为：IMAGE_SECTION_HEADER.VirtualAddress偏移 + 第二步分配的内存区域的起始地址。
+4.检查加载到进程地址空间的位置和之前PE文件中指定的基地址是否一致，如果不一致，则需要重定位。重定位就需要用到1.2节中的IMAGE_OPTIONAL_HEADER64.DataDirectory[5].
+5.加载该DLL依赖的其他dll，并构建"PEHeader.OptionalHeader.DataDirectory.Image_directory_entry_import"导入表.
+6.根据每个Section的"PEHeader.Image_Section_Table.Characteristics"属性来设置内存页的访问属性； 如果被设置为”discardable”属性，则释放该内存页。
+7.获取DLL的入口函数指针，并使用DLL_PROCESS_ATTACH参数调用。
+*/
+
+/* IAT输入顺序 
+1 IID位置PIMAGE_NT_HEADERS->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]
+2 读取IID的Name 获取库名字字符串("kernel32.dll")
+3 load库 LoadLibraryA("kernel32.dll")
+4 IID的OriginalFirstThunk成员 获取INT地址
+5 逐一读取INT中的数组值 获取IMAGE_IMPORT_BY_NAME的地址(RVA)
+6 使用IMAGE_IMPORT_BY_NAME的Hint或者Name 获得相应的起始地址 GetProcAddress("GetCurrentThreadld")
+7 读取IID的FirstThunk(IAT)成员获得IAT地址
+8 将上面的函数地址输入到相应的IAT数组值
+9 重复 4-8直到INT遇到NULL结束
+*/
+
+/* DOC头结构 关注e_magic=MZ e_lfanew到NT头偏移量
+typedef struct _IMAGE_DOS_HEADER {      // DOS .EXE header
+    WORD   e_magic;                     // Magic number
+    WORD   e_cblp;                      // Bytes on last page of file
+    WORD   e_cp;                        // Pages in file
+    WORD   e_crlc;                      // Relocations
+    WORD   e_cparhdr;                   // Size of header in paragraphs
+    WORD   e_minalloc;                  // Minimum extra paragraphs needed
+    WORD   e_maxalloc;                  // Maximum extra paragraphs needed
+    WORD   e_ss;                        // Initial (relative) SS value
+    WORD   e_sp;                        // Initial SP value
+    WORD   e_csum;                      // Checksum
+    WORD   e_ip;                        // Initial IP value
+    WORD   e_cs;                        // Initial (relative) CS value
+    WORD   e_lfarlc;                    // File address of relocation table
+    WORD   e_ovno;                      // Overlay number
+    WORD   e_res[4];                    // Reserved words
+    WORD   e_oemid;                     // OEM identifier (for e_oeminfo)
+    WORD   e_oeminfo;                   // OEM information; e_oemid specific
+    WORD   e_res2[10];                  // Reserved words
+    LONG   e_lfanew;                    // File address of new exe header
+  } IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;
+*/
+
+/* NT头 Signature=PE00
+typedef struct _IMAGE_NT_HEADERS {
+    DWORD Signature;
+    IMAGE_FILE_HEADER FileHeader;
+    IMAGE_OPTIONAL_HEADER32 OptionalHeader;
+} IMAGE_NT_HEADERS32, *PIMAGE_NT_HEADERS32;
+ */
+
+/* NT头 文件头结构
+typedef struct _IMAGE_FILE_HEADER {
+    WORD    Machine;
+    WORD    NumberOfSections;       // 节区数量
+    DWORD   TimeDateStamp;
+    DWORD   PointerToSymbolTable;
+    DWORD   NumberOfSymbols;
+    WORD    SizeOfOptionalHeader;   // OptionalHeader结构大小
+    WORD    Characteristics;        // 文件属性
+} IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;
+*/
+
+/* NT头 可选头
+typedef struct _IMAGE_OPTIONAL_HEADER {
+    //
+    // Standard fields.
+    //
+
+    WORD    Magic;                      // 10B->32位 20B->64位
+    BYTE    MajorLinkerVersion;
+    BYTE    MinorLinkerVersion;
+    DWORD   SizeOfCode;
+    DWORD   SizeOfInitializedData;
+    DWORD   SizeOfUninitializedData;
+    DWORD   AddressOfEntryPoint;        // DllMain 函数VA地址
+    DWORD   BaseOfCode;
+    DWORD   BaseOfData;
+
+    //
+    // NT additional fields.
+    //
+
+    DWORD   ImageBase;                  // PE加载地址 一般exe 0x00400000 dll 0x10000000
+    DWORD   SectionAlignment;
+    DWORD   FileAlignment;
+    WORD    MajorOperatingSystemVersion;
+    WORD    MinorOperatingSystemVersion;
+    WORD    MajorImageVersion;
+    WORD    MinorImageVersion;
+    WORD    MajorSubsystemVersion;
+    WORD    MinorSubsystemVersion;
+    DWORD   Win32VersionValue;
+    DWORD   SizeOfImage;                // PE文件大小
+    DWORD   SizeOfHeaders;
+    DWORD   CheckSum;
+    WORD    Subsystem;                  // 区分exe/dll/sys
+    WORD    DllCharacteristics;
+    DWORD   SizeOfStackReserve;
+    DWORD   SizeOfStackCommit;
+    DWORD   SizeOfHeapReserve;
+    DWORD   SizeOfHeapCommit;
+    DWORD   LoaderFlags;
+    DWORD   NumberOfRvaAndSizes;        // DataDirectory[]大小
+    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+} IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;
+
+/* DataDirectory[]
+#define IMAGE_DIRECTORY_ENTRY_EXPORT          0   // Export Directory
+#define IMAGE_DIRECTORY_ENTRY_IMPORT          1   // Import Directory
+#define IMAGE_DIRECTORY_ENTRY_IAT            12   // Import Address Table
+#define IMAGE_DIRECTORY_ENTRY_BASERELOC       5   // Base Relocation Table
+
+typedef struct _IMAGE_DATA_DIRECTORY {
+    DWORD   VirtualAddress;
+    DWORD   Size;
+} IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
+*/
+
+/* NT头 节区头
+typedef struct _IMAGE_SECTION_HEADER {
+    BYTE    Name[IMAGE_SIZEOF_SHORT_NAME];
+    union {
+            DWORD   PhysicalAddress;    // 内存中节区起始地址(RVA)
+            DWORD   VirtualSize;        // 内存中节区所占大小
+    } Misc;
+    DWORD   VirtualAddress;
+    DWORD   SizeOfRawData;              // 文件中节区所占大小
+    DWORD   PointerToRawData;           // 文件中节区所占大小
+    DWORD   PointerToRelocations;
+    DWORD   PointerToLinenumbers;
+    WORD    NumberOfRelocations;
+    WORD    NumberOfLinenumbers;
+    DWORD   Characteristics;            // 节区属性
+} IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
+
+*/
+
+/* PE 导入表
+typedef struct _IMAGE_IMPORT_DESCRIPTOR {
+    union {
+        DWORD   Characteristics;            // 0 for terminating null import descriptor
+        DWORD   OriginalFirstThunk;         // RVA to original unbound IAT (PIMAGE_THUNK_DATA)
+    } DUMMYUNIONNAME;
+    DWORD   TimeDateStamp;                  // 0 if not bound,
+                                            // -1 if bound, and real date\time stamp
+                                            //     in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new BIND)
+                                            // O.W. date/time stamp of DLL bound to (Old BIND)
+
+    DWORD   ForwarderChain;                 // -1 if no forwarders
+    DWORD   Name;
+    DWORD   FirstThunk;                     // RVA to IAT (if bound this IAT has actual addresses)
+} IMAGE_IMPORT_DESCRIPTOR;
+typedef IMAGE_IMPORT_DESCRIPTOR UNALIGNED *PIMAGE_IMPORT_DESCRIPTOR;
+
+typedef struct _IMAGE_IMPORT_BY_NAME {
+    WORD    Hint;
+    CHAR   Name[1];
+} IMAGE_IMPORT_BY_NAME, *PIMAGE_IMPORT_BY_NAME;
+*/
+
+/* PE 导出表
+typedef struct _IMAGE_EXPORT_DIRECTORY {
+    DWORD   Characteristics;
+    DWORD   TimeDateStamp;
+    WORD    MajorVersion;
+    WORD    MinorVersion;
+    DWORD   Name;
+    DWORD   Base;
+    DWORD   NumberOfFunctions;
+    DWORD   NumberOfNames;
+    DWORD   AddressOfFunctions;     // RVA from base of image
+    DWORD   AddressOfNames;         // RVA from base of image
+    DWORD   AddressOfNameOrdinals;  // RVA from base of image
+} IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;
+*/
